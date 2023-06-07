@@ -1,19 +1,19 @@
-const verifySignUpController = require('../api/verifySignUp');
+const verifySignUpController = require('../controller/verifySignUp');
 const userController = require('../controller/userController');
-const workerController = require('../controller/workerController');
-const bookingController = require('../api/bookings');
-const verifyJwtTokenController = require('../api/verifyJwtToken');
-const verifyAvailableSeat = require('../api/verifySeat');
-const verifyUser = require('../api/verifyUser');
+// const workerController = require('../controller/workerController');
+// const bookingController = require('../api/bookings');
+// const verifyJwtTokenController = require('../api/verifyJwtToken');
+// const verifyAvailableSeat = require('../api/verifySeat');
+// const verifyUser = require('../api/verifyUser');
 
 module.exports = function (app) {
   app.post(
-    '/registration',
+    '/user/registration',
     verifySignUpController.checkDuplicateUserNamePhoneAndEmail,
     userController.signup,
   );
 
-  app.post('/signin', userController.signin);
+  app.post('user/signin', userController.signin);
 
   // app.post(
   //   '/reservation',

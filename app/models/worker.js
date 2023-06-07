@@ -1,7 +1,9 @@
 'use strict';
+
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Worker extends Model {
     /**
@@ -14,9 +16,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Worker.init({
-    employee_id: DataTypes.INTEGER,
+    id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    job: DataTypes.STRING,
     name: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    email: DataTypes.STRING,
+    phone: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Worker',

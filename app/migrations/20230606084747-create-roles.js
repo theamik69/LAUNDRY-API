@@ -13,9 +13,6 @@ module.exports = {
       role: {
         type: Sequelize.STRING,
       },
-      authentication_code: {
-        type: Sequelize.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
