@@ -3,25 +3,23 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Worker extends Model {
+  class Price extends Model {
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
+      // define association here
     }
   }
-  Worker.init({
+  Price.init({
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
-    job: DataTypes.STRING,
-    name: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phone: DataTypes.STRING,
+    laundry_tipe: DataTypes.STRING,
+    price: DataTypes.INTEGER,
   }, {
     sequelize,
-    modelName: 'Worker',
+    modelName: 'Price',
   });
-  return Worker;
+  return Price;
 };

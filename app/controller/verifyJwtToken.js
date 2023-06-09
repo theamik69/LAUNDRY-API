@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/configRoles');
 const { Worker } = require('../models');
+const { Admin } = require('../models');
 
 module.exports = {
   verifyToken(req, res, next) {
@@ -40,18 +41,27 @@ module.exports = {
   isReceiver(req, res, next) {
     Worker.findByPk(req.userId)
       .then((user) => {
-        user.getRoles().then((roles) => {
-          for (let i = 0; i < roles.length; i++) {
-            console.log(roles[i].name);
-            if (roles[i].name.toUpperCase() === 'RECEIVER') {
-              next();
-              return;
-            }
-          }
-          res.status(403).send({
+        if (!user) {
+          return res.status(403).send({
+            status: 'fail',
+            message: 'Id Not Found',
+          });
+        }
+
+        if (user.job !== 'RECEIVER') {
+          return res.status(403).send({
             status: 'fail',
             message: 'Require Receiver Role',
           });
+        }
+
+        next();
+      })
+      .catch((error) => {
+        res.status(500).send({
+          status: 'error',
+          message: 'Internal Server Error',
+          error: error.message,
         });
       });
   },
@@ -59,18 +69,27 @@ module.exports = {
   isLaundryman(req, res, next) {
     Worker.findByPk(req.userId)
       .then((user) => {
-        user.getRoles().then((roles) => {
-          for (let i = 0; i < roles.length; i++) {
-            console.log(roles[i].name);
-            if (roles[i].name.toUpperCase() === 'LAUNDRYMAN') {
-              next();
-              return;
-            }
-          }
-          res.status(403).send({
+        if (!user) {
+          return res.status(403).send({
+            status: 'fail',
+            message: 'Id Not Found',
+          });
+        }
+
+        if (user.job !== 'LAUNDRYMAN') {
+          return res.status(403).send({
             status: 'fail',
             message: 'Require Laundryman Role',
           });
+        }
+
+        next();
+      })
+      .catch((error) => {
+        res.status(500).send({
+          status: 'error',
+          message: 'Internal Server Error',
+          error: error.message,
         });
       });
   },
@@ -78,37 +97,48 @@ module.exports = {
   isShipper(req, res, next) {
     Worker.findByPk(req.userId)
       .then((user) => {
-        user.getRoles().then((roles) => {
-          for (let i = 0; i < roles.length; i++) {
-            console.log(roles[i].name);
-            if (roles[i].name.toUpperCase() === 'SHIPPER') {
-              next();
-              return;
-            }
-          }
-          res.status(403).send({
+        if (!user) {
+          return res.status(403).send({
+            status: 'fail',
+            message: 'Id Not Found',
+          });
+        }
+
+        if (user.job !== 'SHIPPER') {
+          return res.status(403).send({
             status: 'fail',
             message: 'Require Shipper Role',
           });
+        }
+
+        next();
+      })
+      .catch((error) => {
+        res.status(500).send({
+          status: 'error',
+          message: 'Internal Server Error',
+          error: error.message,
         });
       });
   },
 
   isAdmin(req, res, next) {
-    Worker.findByPk(req.userId)
+    Admin.findByPk(req.userId)
       .then((user) => {
-        user.getRoles().then((roles) => {
-          for (let i = 0; i < roles.length; i++) {
-            console.log(roles[i].name);
-            if (roles[i].name.toUpperCase() === 'ADMIN') {
-              next();
-              return;
-            }
-          }
+        if (!user) {
           res.status(403).send({
             status: 'fail',
             message: 'Require Admin Role',
           });
+          return;
+        }
+        next();
+      })
+      .catch((error) => {
+        res.status(500).send({
+          status: 'error',
+          message: 'Internal Server Error',
+          error: error.message,
         });
       });
   },

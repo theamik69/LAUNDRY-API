@@ -1,27 +1,26 @@
 'use strict';
 
-const { Model } = require('sequelize');
+const {
+  Model,
+} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Worker extends Model {
+  class Admin extends Model {
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
     }
   }
-  Worker.init({
+  Admin.init({
     id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.STRING,
     },
-    job: DataTypes.STRING,
-    name: DataTypes.STRING,
+    role: DataTypes.STRING,
     password: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phone: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'Worker',
+    modelName: 'Admin',
   });
-  return Worker;
+  return Admin;
 };

@@ -1,10 +1,9 @@
 const verifySignUpController = require('../controller/verifySignUp');
 const userController = require('../controller/userController');
-// const workerController = require('../controller/workerController');
-// const bookingController = require('../api/bookings');
-// const verifyJwtTokenController = require('../api/verifyJwtToken');
-// const verifyAvailableSeat = require('../api/verifySeat');
-// const verifyUser = require('../api/verifyUser');
+const workerController = require('../controller/workerController');
+const adminController = require('../controller/adminController');
+const verifyJwtTokenController = require('../controller/verifyJwtToken');
+const orderController = require('../controller/orderController');
 
 module.exports = function (app) {
   app.post(
@@ -13,15 +12,46 @@ module.exports = function (app) {
     userController.signup,
   );
 
-  app.post('user/signin', userController.signin);
+  app.post(
+    '/admin/signup',
+    verifySignUpController.checkDuplicateAdminId,
+    adminController.signup,
+  );
 
-  // app.post(
-  //   '/reservation',
-  //   verifyJwtTokenController.verifyToken,
-  //   verifyUser.verifyUser,
-  //   verifyAvailableSeat.checkAvailableSeat,
-  //   bookingController.add,
-  // );
+  app.post('/user/signin', userController.signin);
+
+  app.post('/admin/signin', adminController.signin);
+
+  app.post('/worker/signin', workerController.signin);
+
+  app.post(
+    '/admin/worker/registration',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    verifySignUpController.checkDuplicateEmployeeJob,
+    verifySignUpController.checkDuplicateWorkerPhoneAndEmail,
+    workerController.signup,
+  );
+
+  app.post(
+    '/order',
+    verifyJwtTokenController.verifyToken,
+    orderController.add,
+  );
+
+  app.patch(
+    '/worker/receiver/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isReceiver,
+    orderController.addReceiverStatusByWorker,
+  );
+
+  app.patch(
+    '/worker/laundryman/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isLaundryman,
+    orderController.addLaundrymanStatusByWorker,
+  );
 
   // app.get(
   //   '/reservation/:userid',

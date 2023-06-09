@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const { Worker } = require('../models');
 const { Admin } = require('../models');
 
 module.exports = {
@@ -50,17 +51,69 @@ module.exports = {
     });
   },
 
-  checkDuplicateEmployeeId(req, res, next) {
-    Admin.findOne({
+  checkDuplicateEmployeeJob(req, res, next) {
+    Worker.findOne({
       where: {
-        employee_id: req.body.employee_id,
+        id: req.body.employee_id,
       },
-    }).then((userName) => {
-      if (userName) {
+    }).then((user) => {
+      if (user) {
         res.status(400).send({
           status: 'fail',
-          employee_id: req.body.employee_id,
-          message: 'Employee id is already taken!',
+          id: req.body.employee_id,
+          name: req.body.name,
+          message: 'The Worker has already taken job',
+        });
+        return;
+      }
+      next();
+    });
+  },
+
+  checkDuplicateWorkerPhoneAndEmail(req, res, next) {
+    Worker.findOne({
+      where: {
+        phone: req.body.phone,
+      },
+    }).then((phoneNbr) => {
+      if (phoneNbr) {
+        res.status(400).send({
+          status: 'fail',
+          phone: req.body.phone,
+          message: 'Phone number is already taken!',
+        });
+        return;
+      }
+
+      Worker.findOne({
+        where: {
+          email: req.body.email,
+        },
+      }).then((mail) => {
+        if (mail) {
+          res.status(400).send({
+            status: 'fail',
+            email: req.body.email,
+            message: 'E-mail is already taken!',
+          });
+          return;
+        }
+        next();
+      });
+    });
+  },
+
+  checkDuplicateAdminId(req, res, next) {
+    Admin.findOne({
+      where: {
+        id: req.body.id,
+      },
+    }).then((user) => {
+      if (user) {
+        res.status(400).send({
+          status: 'fail',
+          id: req.body.id,
+          message: 'Id is already taken!',
         });
         return;
       }
