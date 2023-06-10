@@ -1,5 +1,5 @@
 const { User } = require('../models');
-const { Booking } = require('../models');
+const { Order } = require('../models');
 
 module.exports = {
 
@@ -20,11 +20,11 @@ module.exports = {
     });
   },
 
-  verifyUserBooking(req, res, next) {
-    Booking.findOne({
+  verifyUserOrder(req, res, next) {
+    Order.findOne({
       where: {
-        id: req.params.bookingid,
-        user_id: req.params.userid,
+        id: req.params.orderid,
+        user_id: req.userId,
       },
     }).then((user) => {
       if (!user) {

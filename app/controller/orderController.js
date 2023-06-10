@@ -51,7 +51,7 @@ module.exports = {
       });
   },
 
-  listBookingUser(req, res) {
+  listOrderUser(req, res) {
     return Order
       .findAll({
         include: [],
@@ -66,7 +66,7 @@ module.exports = {
         const statuses = {
           status: 'success',
           count: docs.length,
-          confirmed_reservation: docs.map((doc) => doc),
+          list_order: docs.map((doc) => doc),
         };
         res.status(200).send(statuses);
       })
@@ -87,30 +87,30 @@ module.exports = {
       })
       .then((doc) => {
         if (!doc) {
-          return res.status(404).send({
+          res.status(404).send({
             status_response: 'Not Found',
             errors: 'Status Not Found',
           });
         }
 
-        if (doc && doc.shipper_status === null) {
+        if (doc.shipper_status === null) {
           const status = {
             status: 'success',
             id: doc.id,
             totalPrice: doc.total_price,
             message: 'Still being washed',
           };
-          return res.status(200).send(status);
+          res.status(200).send(status);
         }
 
-        if (doc && doc.shipper_status === 'Delivered') {
+        if (doc.shipper_status === 'DELIVERED') {
           const status = {
             status: 'success',
             id: doc.id,
             totalPrice: doc.total_price,
             message: 'Has been delivered',
           };
-          return res.status(200).send(status);
+          res.status(200).send(status);
         }
       })
       .catch((error) => {
@@ -125,17 +125,19 @@ module.exports = {
     return Order
       .findByPk(req.params.orderid, {})
       .then((doc) => {
+        const previousAddress = doc.delivery_to;
+
         if (!doc) {
           return res.status(404).send({
             status_response: 'Bad Request',
-            errors: 'Status Not Found',
+            errors: 'Order Not Found',
           });
         }
 
-        if (doc.user_id !== req.userId) {
+        if (doc.shipper_status === 'DELIVERED') {
           return res.status(403).send({
             status_response: 'Bad Request',
-            errors: 'Different User Id',
+            errors: 'The order has done',
           });
         }
 
@@ -143,10 +145,10 @@ module.exports = {
           .update({
             delivery_to: req.body.delivery_to,
           })
-          .then(() => {
+          .then((newdoc) => {
             const status = {
               status: 'success',
-              message: 'Delivery address has been updated',
+              message: `The shipping address has been modified from the previous destination in ${previousAddress} to ${newdoc.delivery_to}. `,
             };
             return res.status(200).send(status);
           })
@@ -167,12 +169,12 @@ module.exports = {
 
   cancelOrderByUser(req, res) {
     return Order
-      .findByPk(req.params.userid)
+      .findByPk(req.params.orderid)
       .then((data) => {
         if (!data) {
           return res.status(400).send({
             status_response: 'Bad Request',
-            errors: 'User Not Found',
+            errors: 'Order Not Found',
           });
         }
 
@@ -265,7 +267,7 @@ module.exports = {
           .then(() => {
             const status = {
               status: 'success',
-              message: 'Laundry status has been confirmed',
+              message: 'Laundryman status has been confirmed',
             };
             return res.status(200).send(status);
           })

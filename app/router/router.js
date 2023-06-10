@@ -3,6 +3,7 @@ const userController = require('../controller/userController');
 const workerController = require('../controller/workerController');
 const adminController = require('../controller/adminController');
 const verifyJwtTokenController = require('../controller/verifyJwtToken');
+const verifyUser = require('../controller/verifyUser');
 const orderController = require('../controller/orderController');
 
 module.exports = function (app) {
@@ -53,17 +54,39 @@ module.exports = function (app) {
     orderController.addLaundrymanStatusByWorker,
   );
 
-  // app.get(
-  //   '/reservation/:userid',
-  //   verifyJwtTokenController.verifyToken,
-  //   bookingController.listBookingUser,
-  // );
-  // app.get(
-  //   '/reservation/:userid/:bookingid',
-  //   verifyJwtTokenController.verifyToken,
-  //   verifyUser.verifyUserBooking,
-  //   bookingController.getBookingById,
-  // );
+  app.patch(
+    '/worker/shipper/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isShipper,
+    orderController.addShipperStatusByWorker,
+  );
+
+  app.get(
+    '/order/:userid',
+    verifyJwtTokenController.verifyToken,
+    orderController.listOrderUser,
+  );
+  app.get(
+    '/order/:userid/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyUser.verifyUserOrder,
+    orderController.getOrderById,
+  );
+
+  app.patch(
+    '/order/:userid/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyUser.verifyUserOrder,
+    orderController.userChangeDeliveryTo,
+  );
+
+  app.delete(
+    '/order/:userid/:orderid',
+    verifyJwtTokenController.verifyToken,
+    verifyUser.verifyUserOrder,
+    orderController.cancelOrderByUser,
+  );
+
   // app.patch(
   //   '/user/:userid',
   //   verifyJwtTokenController.verifyToken,
