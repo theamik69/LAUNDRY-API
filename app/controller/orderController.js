@@ -51,6 +51,25 @@ module.exports = {
       });
   },
 
+  allListOrder(req, res) {
+    return Order
+      .findAll()
+      .then((docs) => {
+        const statuses = {
+          status: 'success',
+          count: docs.length,
+          list_order: docs.map((doc) => doc),
+        };
+        res.status(200).send(statuses);
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
   listOrderUser(req, res) {
     return Order
       .findAll({
@@ -321,6 +340,24 @@ module.exports = {
               errors: error,
             });
           });
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  deleteAllOrder(req, res) {
+    return Order
+      .truncate()
+      .then(() => {
+        const statuses = {
+          status: 'success',
+          message: 'Delete all data success',
+        };
+        return res.status(200).send(statuses);
       })
       .catch((error) => {
         res.status(400).send({

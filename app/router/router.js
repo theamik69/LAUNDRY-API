@@ -13,17 +13,63 @@ module.exports = function (app) {
     userController.signup,
   );
 
+  app.post('/user/signin', userController.signin);
+
+  app.patch(
+    '/user/:userid',
+    verifyJwtTokenController.verifyToken,
+    userController.update,
+  );
+
+  app.delete(
+    '/user/:userid',
+    verifyJwtTokenController.verifyToken,
+    userController.delete,
+  );
+
   app.post(
     '/admin/signup',
     verifySignUpController.checkDuplicateAdminId,
     adminController.signup,
   );
 
-  app.post('/user/signin', userController.signin);
+  app.post(
+    '/admin/signin',
+    adminController.signin,
+  );
 
-  app.post('/admin/signin', adminController.signin);
+  app.patch(
+    '/admin/:id',
+    verifyJwtTokenController.verifyToken,
+    adminController.update,
+  );
 
-  app.post('/worker/signin', workerController.signin);
+  app.delete(
+    '/admin/:id',
+    verifyJwtTokenController.verifyToken,
+    adminController.delete,
+  );
+
+  app.get(
+    '/admin/alladmin',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    adminController.allListAdmin,
+  );
+
+  app.get(
+    '/admin/alluser',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    userController.allListUser,
+  );
+
+  app.get(
+    '/admin/allworker',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    workerController.allListWorker,
+  );
 
   app.post(
     '/admin/worker/registration',
@@ -32,6 +78,21 @@ module.exports = function (app) {
     verifySignUpController.checkDuplicateEmployeeJob,
     verifySignUpController.checkDuplicateWorkerPhoneAndEmail,
     workerController.signup,
+  );
+
+  app.post('/worker/signin', workerController.signin);
+
+  app.patch(
+    '/worker/:id',
+    verifyJwtTokenController.verifyToken,
+    workerController.update,
+  );
+
+  app.delete(
+    '/admin/worker/:id',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    workerController.delete,
   );
 
   app.post(
@@ -62,6 +123,13 @@ module.exports = function (app) {
   );
 
   app.get(
+    '/admin/allorder',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    orderController.allListOrder,
+  );
+
+  app.get(
     '/order/:userid',
     verifyJwtTokenController.verifyToken,
     orderController.listOrderUser,
@@ -87,14 +155,33 @@ module.exports = function (app) {
     orderController.cancelOrderByUser,
   );
 
-  // app.patch(
-  //   '/user/:userid',
-  //   verifyJwtTokenController.verifyToken,
-  //   userController.update,
-  // );
-  // app.delete(
-  //   '/user/:userid',
-  //   verifyJwtTokenController.verifyToken,
-  //   userController.delete,
-  // );
+  // Untuk mengosongkan database ketika akan mengulang pengetesan
+
+  app.delete(
+    '/worker',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    workerController.deleteAllWorker,
+  );
+
+  app.delete(
+    '/user',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    userController.deleteAllUser,
+  );
+
+  app.delete(
+    '/order',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    orderController.deleteAllOrder,
+  );
+
+  app.delete(
+    '/admin',
+    verifyJwtTokenController.verifyToken,
+    verifyJwtTokenController.isAdmin,
+    adminController.deleteAllAdmin,
+  );
 };

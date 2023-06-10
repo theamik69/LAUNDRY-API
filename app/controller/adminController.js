@@ -78,7 +78,7 @@ module.exports = {
   },
 
   update(req, res) {
-    return Worker
+    return Admin
       .findByPk(req.params.id, {})
       .then((user) => {
         if (!user) {
@@ -90,10 +90,7 @@ module.exports = {
 
         return user
           .update({
-            name: req.body.name,
             password: bcrypt.hashSync(req.body.password, 8),
-            email: req.body.email,
-            phone: req.body.phone,
           })
           .then(() => {
             const status = {
@@ -118,7 +115,7 @@ module.exports = {
   },
 
   delete(req, res) {
-    return Worker
+    return Admin
       .findByPk(req.params.id)
       .then((user) => {
         if (!user) {
@@ -139,6 +136,43 @@ module.exports = {
               errors: error,
             });
           });
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  allListAdmin(req, res) {
+    return Admin
+      .findAll()
+      .then((docs) => {
+        const statuses = {
+          status: 'success',
+          count: docs.length,
+          list_user: docs.map((doc) => doc.id),
+        };
+        res.status(200).send(statuses);
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  deleteAllAdmin(req, res) {
+    return Admin
+      .truncate()
+      .then(() => {
+        const statuses = {
+          status: 'success',
+          message: 'Delete all data success',
+        };
+        return res.status(200).send(statuses);
       })
       .catch((error) => {
         res.status(400).send({

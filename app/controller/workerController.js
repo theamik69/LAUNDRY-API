@@ -150,4 +150,42 @@ module.exports = {
         });
       });
   },
+
+  allListWorker(req, res) {
+    return Worker
+      .findAll()
+      .then((docs) => {
+        const statuses = {
+          status: 'success',
+          count: docs.length,
+          list_worker: docs.map((doc) => doc),
+        };
+        res.status(200).send(statuses);
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  deleteAllWorker(req, res) {
+    return Worker
+      .truncate()
+      .then(() => {
+        const statuses = {
+          status: 'success',
+          message: 'Delete all data success',
+        };
+        return res.status(200).send(statuses);
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
 };

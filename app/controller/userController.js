@@ -84,6 +84,7 @@ module.exports = {
   },
 
   update(req, res) {
+    console.log(req.params.userid);
     return User
       .findByPk(req.params.userid, {})
       .then((user) => {
@@ -96,6 +97,7 @@ module.exports = {
 
         return user
           .update({
+            password: bcrypt.hashSync(req.body.password, 8),
             name: req.body.name,
             address: req.body.address,
             email: req.body.email,
@@ -145,6 +147,45 @@ module.exports = {
               errors: error,
             });
           });
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  allListUser(req, res) {
+    return User
+      .findAll()
+      .then((docs) => {
+        const statuses = {
+          status: 'success',
+          count: docs.length,
+          list_user: docs.map((doc) => doc),
+        };
+        res.status(200).send(statuses);
+      })
+      .catch((error) => {
+        res.status(400).send({
+          status_response: 'Bad Request',
+          errors: error,
+        });
+      });
+  },
+
+  deleteAllUser(req, res) {
+    return User
+      .destroy({
+        where: {},
+      })
+      .then(() => {
+        const statuses = {
+          status: 'success',
+          message: 'Delete all data success',
+        };
+        return res.status(200).send(statuses);
       })
       .catch((error) => {
         res.status(400).send({
